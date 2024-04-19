@@ -302,12 +302,13 @@ class Label {
           {
             return [
               _generateDartDoc(),
-              '  String get $name {',
+              '  String $name({String? locale}) {',
               '    return Intl.message(',
               '      \'$content\',',
               '      name: \'$name\',',
               '      desc: \'$description\',',
               '      args: [],',
+              '      locale: locale,',
               '    );',
               '  }'
             ].join('\n');
