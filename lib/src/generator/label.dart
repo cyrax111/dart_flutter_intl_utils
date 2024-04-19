@@ -102,8 +102,7 @@ class Argument {
 
   bool isFormatAllowed() =>
       (placeholderRef?.requiresFormatting == true) &&
-      ![ElementType.plural, ElementType.gender, ElementType.select]
-          .contains(elementType);
+      ![ElementType.plural, ElementType.gender, ElementType.select].contains(elementType);
 
   String get formattedName => isFormatAllowed() ? '${name}String' : name;
 
@@ -197,8 +196,7 @@ class Placeholder {
         type = _stringAttribute(resourceId, name, attributes, 'type'),
         format = _stringAttribute(resourceId, name, attributes, 'format'),
         optionalParameters = _optionalParameters(resourceId, name, attributes),
-        isCustomDateFormat =
-            _boolAttribute(resourceId, name, attributes, 'isCustomDateFormat');
+        isCustomDateFormat = _boolAttribute(resourceId, name, attributes, 'isCustomDateFormat');
 
   final String resourceId;
   final String name;
@@ -209,12 +207,10 @@ class Placeholder {
   final bool? isCustomDateFormat;
 
   bool get requiresFormatting =>
-      <String>['DateTime', 'double', 'num', 'int'].contains(type) &&
-      format != null;
+      <String>['DateTime', 'double', 'num', 'int'].contains(type) && format != null;
   bool get isNumber => <String>['double', 'int', 'num'].contains(type);
   bool get hasValidNumberFormat => _validNumberFormats.contains(format);
-  bool get hasNumberFormatWithParameters =>
-      _numberFormatsWithNamedParameters.contains(format);
+  bool get hasNumberFormatWithParameters => _numberFormatsWithNamedParameters.contains(format);
   bool get isDate => 'DateTime' == type;
   bool get hasValidDateFormat => _validDateFormats.contains(format);
 
@@ -265,11 +261,10 @@ class Placeholder {
           "The 'optionalParameters' value of the '$name' placeholder in message '$resourceId' is not a properly formatted Map. "
           "Ensure that it is a map with keys that are strings.");
     }
-    final Map<String, Object> optionalParameterMap =
-        Map<String, Object>.from(value);
+    final Map<String, Object> optionalParameterMap = Map<String, Object>.from(value);
     return optionalParameterMap.keys
-        .map<OptionalParameter>((String parameterName) => OptionalParameter(
-            parameterName, optionalParameterMap[parameterName]!))
+        .map<OptionalParameter>((String parameterName) =>
+            OptionalParameter(parameterName, optionalParameterMap[parameterName]!))
         .toList();
   }
 }
@@ -281,8 +276,7 @@ class Label {
   String? description;
   List<Placeholder>? placeholders;
 
-  Label(this.name, this.content,
-      {this.type, this.description, this.placeholders});
+  Label(this.name, this.content, {this.type, this.description, this.placeholders});
 
   /// Generates label getter.
   String generateDartGetter() {
@@ -420,8 +414,7 @@ class Label {
       return "    '$name': [${args.map((arg) => '\'${arg.name}\'').join(', ')}]";
     } catch (e) {
       if (e is! ValidationException) {
-        error(
-            "The '$name' key metadata will be ignored due to parsing errors.");
+        error("The '$name' key metadata will be ignored due to parsing errors.");
       }
 
       return "    // skipped metadata for the '${_escape(name)}' key";
@@ -430,8 +423,7 @@ class Label {
 
   String _generateDartDoc() => '  /// `${_escapeDartDoc(content)}`';
 
-  String _generateDartMethodParameters(List<Argument> args) =>
-      args.map((arg) => '$arg').join(', ');
+  String _generateDartMethodParameters(List<Argument> args) => args.map((arg) => '$arg').join(', ');
 
   String _generateDartMethodArgs(List<Argument> args) =>
       args.map((arg) => arg.formattedName).join(', ');
@@ -474,8 +466,7 @@ class Label {
                   "Check the intl library's NumberFormat class constructors for allowed number formats.");
             }
 
-            final Iterable<String> parameters =
-                placeholder.optionalParameters.map<String>(
+            final Iterable<String> parameters = placeholder.optionalParameters.map<String>(
               (OptionalParameter parameter) {
                 if (parameter.value is num) {
                   return '${parameter.name}: ${parameter.value}';
@@ -507,24 +498,21 @@ class Label {
         .toList();
   }
 
-  bool _validate(String name, String content, List<Argument> args,
-      [showWarnings = true]) {
+  bool _validate(String name, String content, List<Argument> args, [showWarnings = true]) {
     var variableRegex = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*$');
     var placeholderRegex = RegExp('\$[a-zA-Z_][a-zA-Z0-9_]*');
     var reservedKeywords = ['current'];
 
     if (!variableRegex.hasMatch(name)) {
       if (showWarnings) {
-        warning(
-            "The '$name' key will be ignored as its name does not follow naming convention.");
+        warning("The '$name' key will be ignored as its name does not follow naming convention.");
       }
       return false;
     }
 
     if (reservedKeywords.contains(name)) {
       if (showWarnings) {
-        warning(
-            "The '$name' key will be ignored as '$name' is a reserved keyword.");
+        warning("The '$name' key will be ignored as '$name' is a reserved keyword.");
       }
       return false;
     }
@@ -556,12 +544,9 @@ class Label {
   }
 
   /// Merges meta args with extracted args from the message with preserved order.
-  List<Argument> _getArgs(
-      List<Placeholder>? placeholders, List<BaseElement> data) {
+  List<Argument> _getArgs(List<Placeholder>? placeholders, List<BaseElement> data) {
     var args = placeholders != null
-        ? placeholders
-            .map((placeholder) => Argument.fromPlaceholder(placeholder))
-            .toList()
+        ? placeholders.map((placeholder) => Argument.fromPlaceholder(placeholder)).toList()
         : <Argument>[];
 
     data
@@ -644,19 +629,9 @@ class Label {
     var args = <Argument>[];
 
     pluralElement.options
-        .where((option) => [
-              '=0',
-              'zero',
-              '=1',
-              'one',
-              '=2',
-              'two',
-              'few',
-              'many',
-              'other'
-            ].contains(option.name))
-        .forEach((option) =>
-            args.addAll(_getArgumentOrPluralOrSelectArgs(option.value)));
+        .where((option) =>
+            ['=0', 'zero', '=1', 'one', '=2', 'two', 'few', 'many', 'other'].contains(option.name))
+        .forEach((option) => args.addAll(_getArgumentOrPluralOrSelectArgs(option.value)));
 
     return LinkedHashSet<Argument>.from(args).toList();
   }
@@ -666,8 +641,7 @@ class Label {
 
     genderElement.options
         .where((option) => ['female', 'male', 'other'].contains(option.name))
-        .forEach((option) =>
-            args.addAll(_getArgumentOrPluralOrSelectArgs(option.value)));
+        .forEach((option) => args.addAll(_getArgumentOrPluralOrSelectArgs(option.value)));
 
     return LinkedHashSet<Argument>.from(args).toList();
   }
@@ -722,8 +696,7 @@ class Label {
 
   bool _isArgument(List<BaseElement> data) => (data.isNotEmpty &&
       data
-          .map((item) =>
-              [ElementType.argument, ElementType.literal].contains(item.type))
+          .map((item) => [ElementType.argument, ElementType.literal].contains(item.type))
           .reduce((bool acc, bool curr) => acc && curr));
 
   bool _isPlural(List<BaseElement> data) =>
@@ -746,9 +719,8 @@ class Label {
               }
             case ElementType.argument:
               {
-                var formattedArg = args
-                    .singleWhere((element) => element.name == item.value)
-                    .formattedName;
+                var formattedArg =
+                    args.singleWhere((element) => element.name == item.value).formattedName;
 
                 return MapEntry(
                     index,
@@ -758,18 +730,18 @@ class Label {
               }
             case ElementType.plural:
               {
-                return MapEntry(index,
-                    '\${${_generatePluralMessage(item as PluralElement, args)}}');
+                return MapEntry(
+                    index, '\${${_generatePluralMessage(item as PluralElement, args)}}');
               }
             case ElementType.gender:
               {
-                return MapEntry(index,
-                    '\${${_generateGenderMessage(item as GenderElement, args)}}');
+                return MapEntry(
+                    index, '\${${_generateGenderMessage(item as GenderElement, args)}}');
               }
             case ElementType.select:
               {
-                return MapEntry(index,
-                    '\${${_generateSelectMessage(item as SelectElement, args)}}');
+                return MapEntry(
+                    index, '\${${_generateSelectMessage(item as SelectElement, args)}}');
               }
             default:
               {
@@ -858,8 +830,7 @@ class Label {
     }
 
     var sanitized = uniqueKeys
-        .map((uniqueKey) =>
-            options.firstWhere((option) => option.name == uniqueKey))
+        .map((uniqueKey) => options.firstWhere((option) => option.name == uniqueKey))
         .toList();
     if (sanitized.length != options.length) {
       warning("Detected plural irregularity for the '$name' key.");
@@ -871,8 +842,7 @@ class Label {
       if (option.value.length == 1 &&
           option.value[0] is LiteralElement &&
           (option.value[0] as LiteralElement).value.isEmpty) {
-        warning(
-            "The '$name' key lacks translation for the plural form '${option.name}'.");
+        warning("The '$name' key lacks translation for the plural form '${option.name}'.");
       }
     }
 
@@ -916,8 +886,7 @@ class Label {
     var uniqueKeys = LinkedHashSet<String>.from(keys);
 
     var sanitized = uniqueKeys
-        .map((uniqueKey) =>
-            options.firstWhere((option) => option.name == uniqueKey))
+        .map((uniqueKey) => options.firstWhere((option) => option.name == uniqueKey))
         .toList();
     if (sanitized.length != options.length) {
       warning("Detected gender irregularity for the '$name' key.");
@@ -929,8 +898,7 @@ class Label {
       if (option.value.length == 1 &&
           option.value[0] is LiteralElement &&
           (option.value[0] as LiteralElement).value.isEmpty) {
-        warning(
-            "The '$name' key lacks translation for the gender form '${option.name}'.");
+        warning("The '$name' key lacks translation for the gender form '${option.name}'.");
       }
     }
 
@@ -956,8 +924,7 @@ class Label {
     var uniqueKeys = LinkedHashSet<String>.from(keys);
 
     var sanitized = uniqueKeys
-        .map((uniqueKey) =>
-            options.firstWhere((option) => option.name == uniqueKey))
+        .map((uniqueKey) => options.firstWhere((option) => option.name == uniqueKey))
         .toList();
     if (sanitized.length != options.length) {
       warning("Detected select irregularity for the '$name' key.");
@@ -969,8 +936,7 @@ class Label {
       if (option.value.length == 1 &&
           option.value[0] is LiteralElement &&
           (option.value[0] as LiteralElement).value.isEmpty) {
-        warning(
-            "The '$name' key lacks translation for the select case '${option.name}'.");
+        warning("The '$name' key lacks translation for the select case '${option.name}'.");
       }
     }
 
@@ -1056,8 +1022,7 @@ class Label {
     var options = <String>[];
 
     _sanitizeSelectOptions(element.options).forEach((option) {
-      options.add(
-          "'${option.name}': '${_generatePluralOrSelectOptionMessage(option, args)}'");
+      options.add("'${option.name}': '${_generatePluralOrSelectOptionMessage(option, args)}'");
     });
 
     return 'Intl.select(${element.value}, {${options.join(', ')}})';
@@ -1078,9 +1043,8 @@ class Label {
                   }
                 case ElementType.argument:
                   {
-                    var formattedArg = args
-                        .singleWhere((element) => element.name == item.value)
-                        .formattedName;
+                    var formattedArg =
+                        args.singleWhere((element) => element.name == item.value).formattedName;
 
                     return MapEntry(
                         index,
@@ -1103,8 +1067,7 @@ class Label {
   ///
   /// Note: Current implementation only supports trivial plural, gender and select options (literal and argument messages)
   bool _validatePluralOrSelectOption(List<BaseElement> data) => data
-      .map((item) =>
-          [ElementType.literal, ElementType.argument].contains(item.type))
+      .map((item) => [ElementType.literal, ElementType.argument].contains(item.type))
       .reduce((acc, curr) => acc && curr);
 
   String _getRawPluralOrSelectOption(Option option) {
@@ -1137,8 +1100,7 @@ class Label {
         var chunk = content.substring(0, i + 1);
 
         var optionIndex = chunk.lastIndexOf(RegExp('${option.name}(\\s)*{'));
-        if (optionIndex != -1 &&
-            chunk.substring(optionIndex, i).trim() == option.name) {
+        if (optionIndex != -1 && chunk.substring(optionIndex, i).trim() == option.name) {
           return i + 1;
         }
       }
